@@ -1,11 +1,11 @@
 {
-  "name": "Abastecimento Seguro - Celta e NMAX",
+  "name": "Abastecimento Sync - Celta e NMAX",
   "short_name": "Abastecimento",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#111827",
-  "description": "Controle de abastecimento com cópia espelho, recuperação e backup.",
+  "description": "Controle de abastecimento sincronizado entre dispositivos.",
   "icons": [
     {
       "src": "icon.svg",

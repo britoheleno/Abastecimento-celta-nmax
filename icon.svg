@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#111827"/><path d="M90 110h250c25 0 45 20 45 45v240H65V135c0-14 11-25 25-25z" fill="#fff"/><rect x="110" y="145" width="220" height="105" rx="18" fill="#dbeafe"/><circle cx="130" cy="365" r="40" fill="#d1d5db"/><circle cx="310" cy="365" r="40" fill="#d1d5db"/><path d="M390 80l60 22v58c0 44-24 78-60 93-36-15-60-49-60-93v-58z" fill="#22c55e"/><path d="M360 162l21 21 39-49" fill="none" stroke="#fff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#111827"/>
+<path d="M108 92h204c30 0 54 24 54 54v236H78V120c0-15 13-28 30-28z" fill="#fff"/>
+<rect x="118" y="132" width="208" height="92" rx="16" fill="#dbeafe"/>
+<circle cx="140" cy="354" r="36" fill="#d1d5db"/>
+<circle cx="304" cy="354" r="36" fill="#d1d5db"/>
+<path d="M367 192h35l42 47v117c0 18-14 32-32 32h-45v-42h21c6 0 11-5 11-11v-75l-32-35z" fill="#fff"/>
+<circle cx="408" cy="104" r="54" fill="#22c55e"/>
+<path d="M382 104h52M408 78v52" stroke="#fff" stroke-width="13" stroke-linecap="round"/>
+</svg>

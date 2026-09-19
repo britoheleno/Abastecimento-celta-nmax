@@ -1,481 +1,339 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#111827" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Abastecimento Seguro - Celta e NMAX</title>
-  
-  
-  <style>
-    :root{
-      --bg:#f3f4f6; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
-      --soft:#f9fafb; --blue:#eff6ff; --green:#ecfdf5; --ok:#166534; --warn:#b45309; --bad:#b91c1c;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .app{max-width:1220px;margin:auto;padding:18px 14px 40px}
-    h1{margin:0 0 4px;font-size:1.55rem}.sub{color:var(--muted);font-size:.95rem;margin-bottom:16px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-    .section-title{font-size:1rem;font-weight:800;margin-bottom:10px}
-    .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .stats,.overall{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .metric{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--soft)}
-    .metric .label{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
-    .metric .value{font-size:1.14rem;font-weight:800}
-    form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px}
-    input,select{width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:.95rem}
-    input:focus,select:focus{outline:2px solid #c7d2fe;border-color:#a5b4fc}
-    .span2{grid-column:span 2}.span4{grid-column:span 4}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-    .primary{background:#111827;color:#fff}.secondary{background:#e5e7eb;color:#111827}.danger{background:#fee2e2;color:#991b1b}
-    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:700}.car{background:var(--blue)}.moto{background:var(--green)}
-    .hint,.mini{font-size:.79rem;color:var(--muted);line-height:1.4}.plate{font-size:.86rem;color:#374151;margin-top:6px}
-    .alert{padding:12px;border-radius:12px;border:1px solid var(--line)}.alert.ok{background:#f0fdf4;color:var(--ok)}.alert.warn{background:#fff7ed;color:var(--warn)}.alert.bad{background:#fef2f2;color:var(--bad)}
-    .canvas-wrap{border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}canvas{display:block;width:100%;height:220px}
-    .month-list{display:grid;gap:8px}.month-row{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
-    .filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.filterbtn{background:#f3f4f6;color:#111827}.filterbtn.active{background:#111827;color:#fff}
-    .table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:1260px}
-    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
-    th{background:#fafafa;color:var(--muted);font-weight:800;position:sticky;top:0}td.left{text-align:left}
-    .empty{text-align:center;color:var(--muted);padding:24px 8px}.footer{margin-top:14px;text-align:center;font-size:.76rem;color:var(--muted)}
-    .photo-preview{max-width:100%;max-height:160px;border-radius:10px;border:1px solid var(--line);display:none;margin-top:8px}
-    .photo-link{font-size:.78rem;text-decoration:underline;cursor:pointer}
-    #installBtn{display:none}
-
-    .safety-banner{padding:12px 13px;border-radius:12px;border:1px solid var(--line);margin-bottom:12px;font-size:.86rem;line-height:1.4}
-    .safety-banner.warn{background:#fff7ed;color:#92400e}.safety-banner.ok{background:#f0fdf4;color:#166534}
-    .safety-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-    .safety-item{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--soft)}
-    .safety-item .k{font-size:.72rem;color:var(--muted);text-transform:uppercase}.safety-item .v{font-weight:800;margin-top:3px}
-    .backup-now{background:#166534;color:#fff}
-    @media(max-width:980px){
-      .two,.three,.stats,.overall,form,.safety-grid{grid-template-columns:repeat(2,1fr)}
-      .span4,.span2{grid-column:span 2}
-    }
-    @media(max-width:560px){
-      .two,.three,.stats,.overall,form,.safety-grid{grid-template-columns:1fr}
-      .span4,.span2{grid-column:span 1}
-    }
-    @media print{
-      .no-print{display:none!important}
-      body{background:#fff}
-      .app{max-width:none;padding:0}
-      .card{box-shadow:none;break-inside:avoid}
-      table{min-width:0;font-size:9px}
-      th,td{white-space:normal}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Abastecimento Sync - Celta e NMAX</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--soft:#f9fafb;--blue:#eff6ff;--green:#ecfdf5;--ok:#166534;--warn:#b45309;--bad:#b91c1c}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:1180px;margin:auto;padding:16px 12px 42px}
+h1{margin:0 0 4px;font-size:1.5rem}.sub{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.section-title{font-size:1rem;font-weight:800;margin-bottom:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stats,.overall{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.metric{border:1px solid var(--line);border-radius:13px;padding:11px;background:var(--soft)}
+.metric .label{font-size:.73rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.metric .value{font-size:1.12rem;font-weight:800}
+form{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px}
+input,select{width:100%;padding:11px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:.95rem}
+.span2{grid-column:span 2}.span4{grid-column:span 4}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+.primary{background:#111827;color:#fff}.secondary{background:#e5e7eb;color:#111827}.danger{background:#fee2e2;color:#991b1b}.syncbtn{background:#166534;color:#fff}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:700}.car{background:var(--blue)}.moto{background:var(--green)}
+.hint,.mini{font-size:.79rem;color:var(--muted);line-height:1.4}
+.banner{padding:11px 12px;border-radius:12px;border:1px solid var(--line);margin-top:8px}.banner.ok{background:#f0fdf4;color:var(--ok)}.banner.warn{background:#fff7ed;color:var(--warn)}.banner.bad{background:#fef2f2;color:var(--bad)}
+.statusgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.status{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--soft)}
+.status .k{font-size:.70rem;color:var(--muted);text-transform:uppercase}.status .v{font-weight:800;margin-top:3px;word-break:break-word}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:.84rem;min-width:1080px}
+th,td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+th{background:#fafafa;color:var(--muted);font-weight:800;position:sticky;top:0}td.left{text-align:left}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.filterbtn{background:#f3f4f6;color:#111827}.filterbtn.active{background:#111827;color:#fff}
+.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:.75rem;margin-top:14px}
+@media(max-width:900px){.two,.stats,.overall,form,.statusgrid{grid-template-columns:repeat(2,1fr)}.span2,.span4{grid-column:span 2}}
+@media(max-width:560px){.two,.stats,.overall,form,.statusgrid{grid-template-columns:1fr}.span2,.span4{grid-column:span 1}}
+</style>
 </head>
 <body>
 <div class="app">
-  <h1>Controle de Abastecimento</h1>
-  <div class="sub">Celta e NMAX • versão com proteção extra contra perda de dados.</div>
+<h1>Controle de Abastecimento</h1>
+<div class="sub">Celta e NMAX • sincronização entre celular e computador</div>
 
-  <div id="localOpenWarning" class="safety-banner warn no-print" style="display:none">
-    <strong>Atenção:</strong> este aplicativo foi aberto como arquivo local. Para enxergar sempre o mesmo histórico, abra o <strong>mesmo arquivo no mesmo navegador</strong>. Uma nova cópia do HTML pode aparecer vazia mesmo que o histórico antigo ainda exista.
+<div class="card" style="margin-bottom:12px">
+  <div class="section-title">Sincronização em nuvem</div>
+
+  <div id="cloudSetup">
+    <form id="cloudConfigForm">
+      <div class="span2"><label>URL do projeto Supabase</label><input id="supabaseUrl" placeholder="https://xxxx.supabase.co"></div>
+      <div class="span2"><label>Chave pública (anon / publishable key)</label><input id="supabaseKey" placeholder="Cole a chave pública"></div>
+      <div class="span4 actions"><button class="primary" type="submit">Salvar configuração da nuvem</button></div>
+    </form>
+    <div class="hint">Use somente a chave pública/anon. Nunca coloque uma service_role key neste aplicativo.</div>
   </div>
 
-  <div id="recoveryNotice" class="safety-banner ok no-print" style="display:none"></div>
+  <div id="authBox" class="hidden" style="margin-top:12px">
+    <form id="authForm">
+      <div class="span2"><label>E-mail</label><input id="authEmail" type="email" required autocomplete="email"></div>
+      <div class="span2"><label>Senha</label><input id="authPassword" type="password" required minlength="6" autocomplete="current-password"></div>
+      <div class="span4 actions">
+        <button class="primary" type="button" id="signInBtn">Entrar</button>
+        <button class="secondary" type="button" id="signUpBtn">Criar conta</button>
+      </div>
+    </form>
+  </div>
 
-  <div class="card no-print" style="margin-bottom:12px">
-    <div class="section-title">Proteção dos dados</div>
-    <div class="safety-grid">
-      <div class="safety-item"><div class="k">Registros</div><div class="v" id="safeRecords">0</div></div>
-      <div class="safety-item"><div class="k">Última alteração</div><div class="v" id="safeChange">—</div></div>
-      <div class="safety-item"><div class="k">Último backup</div><div class="v" id="safeBackup">Nunca</div></div>
-    </div>
-    <div id="backupPending" class="safety-banner warn" style="display:none;margin-top:10px;margin-bottom:0">
-      Existem alterações que ainda não foram protegidas em um arquivo de backup.
+  <div id="signedBox" class="hidden" style="margin-top:12px">
+    <div class="statusgrid">
+      <div class="status"><div class="k">Conta</div><div class="v" id="cloudUser">—</div></div>
+      <div class="status"><div class="k">Status</div><div class="v" id="cloudStatus">—</div></div>
+      <div class="status"><div class="k">Última sincronização</div><div class="v" id="cloudLastSync">—</div></div>
+      <div class="status"><div class="k">Registros</div><div class="v" id="cloudRecordCount">0</div></div>
     </div>
     <div class="actions" style="margin-top:10px">
-      <button class="backup-now" type="button" onclick="backupJSON()">Fazer backup agora</button>
-      <button class="secondary" type="button" onclick="document.getElementById('restoreFile').click()">Restaurar backup</button>
-      <button class="secondary" type="button" onclick="exportCSV()">Exportar CSV</button>
-      <button class="secondary" type="button" onclick="generatePDFReport()">Gerar relatório PDF</button>
-      <button class="primary" id="installBtn" type="button">Instalar na tela inicial</button>
-      <input type="file" id="restoreFile" accept=".json" style="display:none">
-    </div>
-    <div class="hint" style="margin-top:8px">
-      Esta versão salva uma cópia principal, uma cópia espelho e também uma cópia no banco interno do navegador. O arquivo de backup JSON continua sendo a proteção mais segura caso os dados do navegador sejam apagados.
+      <button class="syncbtn" type="button" id="syncNowBtn">Sincronizar agora</button>
+      <button class="secondary" type="button" id="signOutBtn">Sair da conta</button>
+      <button class="secondary" type="button" id="changeCloudBtn">Alterar configuração</button>
     </div>
   </div>
-
-  <div class="card no-print" style="margin-bottom:12px">
-    <div class="section-title">Configuração dos veículos</div>
-    <form id="settingsForm">
-      <div><label>Placa do Celta</label><input id="plateCelta" placeholder="Ex.: ABC1D23"></div>
-      <div><label>Odômetro inicial Celta (km)</label><input type="number" id="initialOdoCelta" min="0" step="0.1"></div>
-      <div><label>Troca de óleo Celta a cada (km)</label><input type="number" id="oilKmCelta" min="1" value="10000"></div>
-      <div><label>Última troca óleo Celta (km)</label><input type="number" id="lastOilKmCelta" min="0" step="0.1"></div>
-
-      <div><label>Placa da NMAX</label><input id="plateNmax" placeholder="Ex.: XYZ9K87"></div>
-      <div><label>Odômetro inicial NMAX (km)</label><input type="number" id="initialOdoNmax" min="0" step="0.1"></div>
-      <div><label>Troca de óleo NMAX a cada (km)</label><input type="number" id="oilKmNmax" min="1" value="3000"></div>
-      <div><label>Última troca óleo NMAX (km)</label><input type="number" id="lastOilKmNmax" min="0" step="0.1"></div>
-
-      <div><label>Última troca óleo Celta (data)</label><input type="date" id="lastOilDateCelta"></div>
-      <div><label>Última troca óleo NMAX (data)</label><input type="date" id="lastOilDateNmax"></div>
-      <div class="span2 actions"><button class="primary" type="submit">Salvar configurações</button></div>
-    </form>
-  </div>
-
-  <div class="card" style="margin-bottom:12px">
-    <div class="section-title">Resumo geral</div>
-    <div class="overall">
-      <div class="metric"><div class="label">Total gasto</div><div class="value" id="gastoTotal">R$ 0,00</div></div>
-      <div class="metric"><div class="label">Total litros</div><div class="value" id="litrosTotal">0,00 L</div></div>
-      <div class="metric"><div class="label">Km calculados</div><div class="value" id="kmTotal">0,0 km</div></div>
-      <div class="metric"><div class="label">Média geral global</div><div class="value" id="mediaGlobal">—</div></div>
-    </div>
-  </div>
-
-  <div class="two">
-    <div class="card">
-      <div class="section-title"><span class="pill car">Carro</span> Celta</div>
-      <div class="plate" id="plateShowCelta">Placa: —</div>
-      <div class="plate" id="odoShowCelta">Odômetro inicial: —</div>
-      <div class="stats" style="margin-top:10px">
-        <div class="metric"><div class="label">Último consumo</div><div class="value" id="celtaUltimo">—</div></div>
-        <div class="metric"><div class="label">Melhor média</div><div class="value" id="celtaMelhor">—</div></div>
-        <div class="metric"><div class="label">Pior média</div><div class="value" id="celtaPior">—</div></div>
-        <div class="metric"><div class="label">Média geral</div><div class="value" id="celtaMedia">—</div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-title"><span class="pill moto">Moto</span> NMAX</div>
-      <div class="plate" id="plateShowNmax">Placa: —</div>
-      <div class="plate" id="odoShowNmax">Odômetro inicial: —</div>
-      <div class="stats" style="margin-top:10px">
-        <div class="metric"><div class="label">Último consumo</div><div class="value" id="nmaxUltimo">—</div></div>
-        <div class="metric"><div class="label">Melhor média</div><div class="value" id="nmaxMelhor">—</div></div>
-        <div class="metric"><div class="label">Pior média</div><div class="value" id="nmaxPior">—</div></div>
-        <div class="metric"><div class="label">Média geral</div><div class="value" id="nmaxMedia">—</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="three" style="margin-top:12px">
-    <div class="card"><div class="section-title">Manutenção — Celta</div><div id="alertCelta" class="alert ok">Sem dados suficientes.</div></div>
-    <div class="card"><div class="section-title">Manutenção — NMAX</div><div id="alertNmax" class="alert ok">Sem dados suficientes.</div></div>
-    <div class="card"><div class="section-title">Gasto por mês</div><div class="month-list" id="monthList"><div class="mini">Sem dados.</div></div></div>
-  </div>
-
-  <div class="two" style="margin-top:12px">
-    <div class="card"><div class="section-title">Gráfico de consumo — Celta</div><div class="canvas-wrap"><canvas id="chartCelta" width="520" height="220"></canvas></div></div>
-    <div class="card"><div class="section-title">Gráfico de consumo — NMAX</div><div class="canvas-wrap"><canvas id="chartNmax" width="520" height="220"></canvas></div></div>
-  </div>
-
-  <div class="card no-print" style="margin-top:12px">
-    <div class="section-title">Novo abastecimento</div>
-    <form id="fuelForm">
-      <div><label>Data</label><input type="date" id="date" required></div>
-      <div><label>Veículo</label><select id="vehicleName"><option value="Celta">Celta</option><option value="NMAX">NMAX</option></select></div>
-      <div><label>Tipo</label><input id="vehicleType" value="Carro" readonly></div>
-      <div><label>Combustível</label><select id="fuel"><option>Gasolina</option><option>Etanol</option><option>Diesel</option><option>Gasolina aditivada</option><option>Outro</option></select></div>
-      <div><label>Hodômetro (km)</label><input type="number" step="0.1" min="0" id="odo" required></div>
-      <div><label>Litros</label><input type="number" step="0.001" min="0.001" id="liters" required></div>
-      <div><label>Preço por litro (R$)</label><input type="number" step="0.001" min="0" id="price"></div>
-      <div><label>Valor pago (R$)</label><input type="number" step="0.01" min="0" id="total"></div>
-      <div><label>Tanque cheio?</label><select id="full"><option value="yes">Sim</option><option value="no">Não</option></select></div>
-      <div class="span2"><label>Posto / observação</label><input id="note" placeholder="Ex.: Shell, viagem, cidade..."></div>
-      <div>
-        <label>Foto do comprovante</label>
-        <input type="file" id="receiptPhoto" accept="image/*" capture="environment">
-        <img id="photoPreview" class="photo-preview" alt="Prévia do comprovante">
-      </div>
-      <div class="span4 actions"><button class="primary" type="submit">Salvar abastecimento</button></div>
-    </form>
-    <div class="hint" style="margin-top:8px">A foto é comprimida antes de ser salva para reduzir o uso de espaço no aparelho.</div>
-  </div>
-
-  <div class="card" style="margin-top:12px">
-    <div class="section-title">Histórico</div>
-    <div class="filterbar no-print">
-      <button class="filterbtn active" onclick="setFilter('Todos',this)">Todos</button>
-      <button class="filterbtn" onclick="setFilter('Celta',this)">Celta</button>
-      <button class="filterbtn" onclick="setFilter('NMAX',this)">NMAX</button>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr>
-          <th>Data</th><th>Veículo</th><th>Combustível</th><th>Km</th><th>Litros</th><th>R$/L</th><th>Total</th><th>Km rodados</th><th>Km/L</th><th>R$/km</th><th>Comprovante</th><th>Obs.</th><th class="no-print"></th>
-        </tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-    <div class="empty" id="empty">Nenhum abastecimento registrado.</div>
-  </div>
-
-  <div class="footer">Os dados ficam salvos localmente neste aparelho/navegador.</div>
+  <div id="cloudMessage" class="banner warn">Configure o Supabase para ativar a sincronização.</div>
 </div>
 
-<script>
-const KEY_RECORDS='fuel_control_celta_nmax_v5_records';
-const KEY_SETTINGS='fuel_control_celta_nmax_v5_settings';
-const MIRROR_RECORDS='fuel_control_celta_nmax_v5_records_mirror';
-const MIRROR_SETTINGS='fuel_control_celta_nmax_v5_settings_mirror';
-const META_KEY='fuel_control_celta_nmax_v5_meta';
-const OLD_RECORD_KEYS=['fuel_control_celta_nmax_v4_records','fuel_control_celta_nmax_v3_records'];
-const OLD_SETTINGS_KEYS=['fuel_control_celta_nmax_v4_settings','fuel_control_celta_nmax_v3_settings'];
+<div class="card" style="margin-bottom:12px">
+  <div class="section-title">Proteção local e backup</div>
+  <div class="statusgrid">
+    <div class="status"><div class="k">Registros locais</div><div class="v" id="stRecords">0</div></div>
+    <div class="status"><div class="k">Última alteração</div><div class="v" id="stChange">—</div></div>
+    <div class="status"><div class="k">Último backup</div><div class="v" id="stBackup">Nunca</div></div>
+    <div class="status"><div class="k">Pendente de nuvem</div><div class="v" id="stPending">Não</div></div>
+  </div>
+  <div class="actions" style="margin-top:10px">
+    <button class="syncbtn" type="button" onclick="backupJSON()">Fazer backup JSON</button>
+    <button class="secondary" type="button" onclick="document.getElementById('restoreFile').click()">Restaurar backup</button>
+    <button class="secondary" type="button" onclick="exportCSV()">Exportar CSV</button>
+    <input id="restoreFile" type="file" accept=".json" style="display:none">
+  </div>
+</div>
 
-function safeParse(value, fallback=null){ try{return value?JSON.parse(value):fallback}catch{return fallback} }
-function firstStored(keys, fallback=null){ for(const k of keys){const v=safeParse(localStorage.getItem(k),null);if(v!==null)return v} return fallback }
+<div class="card" style="margin-bottom:12px">
+  <div class="section-title">Configuração dos veículos</div>
+  <form id="settingsForm">
+    <div><label>Placa Celta</label><input id="plateCelta"></div>
+    <div><label>Odômetro inicial Celta</label><input type="number" id="initialOdoCelta" step="0.1"></div>
+    <div><label>Troca óleo Celta a cada (km)</label><input type="number" id="oilKmCelta" value="10000"></div>
+    <div><label>Última troca óleo Celta (km)</label><input type="number" id="lastOilKmCelta" step="0.1"></div>
+    <div><label>Placa NMAX</label><input id="plateNmax"></div>
+    <div><label>Odômetro inicial NMAX</label><input type="number" id="initialOdoNmax" step="0.1"></div>
+    <div><label>Troca óleo NMAX a cada (km)</label><input type="number" id="oilKmNmax" value="3000"></div>
+    <div><label>Última troca óleo NMAX (km)</label><input type="number" id="lastOilKmNmax" step="0.1"></div>
+    <div class="span4 actions"><button class="primary" type="submit">Salvar configurações</button></div>
+  </form>
+</div>
 
-let records = safeParse(localStorage.getItem(KEY_RECORDS), null);
-let settings = safeParse(localStorage.getItem(KEY_SETTINGS), null);
-let meta = safeParse(localStorage.getItem(META_KEY), {lastChange:null,lastBackup:null,dirtyChanges:0}) || {lastChange:null,lastBackup:null,dirtyChanges:0};
-let startupRecovery='';
+<div class="card" style="margin-bottom:12px">
+  <div class="section-title">Resumo geral</div>
+  <div class="overall">
+    <div class="metric"><div class="label">Total gasto</div><div class="value" id="gastoTotal">R$ 0,00</div></div>
+    <div class="metric"><div class="label">Total litros</div><div class="value" id="litrosTotal">0,00 L</div></div>
+    <div class="metric"><div class="label">Km calculados</div><div class="value" id="kmTotal">0 km</div></div>
+    <div class="metric"><div class="label">Média geral</div><div class="value" id="mediaGlobal">—</div></div>
+  </div>
+</div>
 
-if(!Array.isArray(records)){
-  const mirror=safeParse(localStorage.getItem(MIRROR_RECORDS),null);
-  if(Array.isArray(mirror)){records=mirror;startupRecovery='Histórico recuperado automaticamente pela cópia espelho.'}
-  else{
-    records=firstStored(OLD_RECORD_KEYS,[]);
-    if(records.length) startupRecovery='Dados de uma versão anterior foram encontrados e migrados automaticamente.';
-  }
-}
-if(!settings || typeof settings!=='object'){
-  const mirror=safeParse(localStorage.getItem(MIRROR_SETTINGS),null);
-  settings=(mirror&&typeof mirror==='object')?mirror:firstStored(OLD_SETTINGS_KEYS,null);
-  settings=settings || {
-    plateCelta:'', plateNmax:'', initialOdoCelta:'', initialOdoNmax:'',
-    oilKmCelta:10000, lastOilKmCelta:'', oilKmNmax:3000, lastOilKmNmax:'',
-    lastOilDateCelta:'', lastOilDateNmax:''
-  };
-}
-if(settings.initialOdoCelta === undefined) settings.initialOdoCelta='';
-if(settings.initialOdoNmax === undefined) settings.initialOdoNmax='';
+<div class="two">
+  <div class="card">
+    <div class="section-title"><span class="pill car">Carro</span> Celta</div>
+    <div class="stats">
+      <div class="metric"><div class="label">Último</div><div class="value" id="celtaUltimo">—</div></div>
+      <div class="metric"><div class="label">Melhor</div><div class="value" id="celtaMelhor">—</div></div>
+      <div class="metric"><div class="label">Pior</div><div class="value" id="celtaPior">—</div></div>
+      <div class="metric"><div class="label">Média</div><div class="value" id="celtaMedia">—</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title"><span class="pill moto">Moto</span> NMAX</div>
+    <div class="stats">
+      <div class="metric"><div class="label">Último</div><div class="value" id="nmaxUltimo">—</div></div>
+      <div class="metric"><div class="label">Melhor</div><div class="value" id="nmaxMelhor">—</div></div>
+      <div class="metric"><div class="label">Pior</div><div class="value" id="nmaxPior">—</div></div>
+      <div class="metric"><div class="label">Média</div><div class="value" id="nmaxMedia">—</div></div>
+    </div>
+  </div>
+</div>
 
-let currentFilter='Todos';
-let currentPhotoData='';
+<div class="card" style="margin-top:12px">
+  <div class="section-title">Novo abastecimento</div>
+  <form id="fuelForm">
+    <div><label>Data</label><input type="date" id="date" required></div>
+    <div><label>Veículo</label><select id="vehicleName"><option>Celta</option><option>NMAX</option></select></div>
+    <div><label>Combustível</label><select id="fuel"><option>Gasolina</option><option>Etanol</option><option>Gasolina aditivada</option><option>Outro</option></select></div>
+    <div><label>Tanque cheio?</label><select id="full"><option value="yes">Sim</option><option value="no">Não</option></select></div>
+    <div><label>Hodômetro (km)</label><input type="number" id="odo" step="0.1" min="0" required></div>
+    <div><label>Litros</label><input type="number" id="liters" step="0.001" min="0.001" required></div>
+    <div><label>Preço/L (R$)</label><input type="number" id="price" step="0.001" min="0"></div>
+    <div><label>Total (R$)</label><input type="number" id="total" step="0.01" min="0"></div>
+    <div class="span4"><label>Posto / observação</label><input id="note"></div>
+    <div class="span4 actions"><button class="primary" type="submit">Salvar abastecimento</button></div>
+  </form>
+</div>
+
+<div class="card" style="margin-top:12px">
+  <div class="section-title">Histórico</div>
+  <div class="filterbar">
+    <button class="filterbtn active" onclick="setFilter('Todos',this)">Todos</button>
+    <button class="filterbtn" onclick="setFilter('Celta',this)">Celta</button>
+    <button class="filterbtn" onclick="setFilter('NMAX',this)">NMAX</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Data</th><th>Veículo</th><th>Combustível</th><th>Km</th><th>Litros</th><th>R$/L</th><th>Total</th><th>Km rodados</th><th>Km/L</th><th>R$/km</th><th>Obs.</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div id="empty" class="mini" style="padding:22px;text-align:center">Nenhum abastecimento registrado.</div>
+</div>
+<div class="footer">V6 Sync • cópia local + sincronização Supabase + backup JSON</div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const STATE_KEY='fuel_sync_v6_state';
+const META_KEY='fuel_sync_v6_meta';
+const CLOUD_KEY='fuel_sync_v6_cloud';
+const OLD_KEYS=['fuel_secure_v5_primary','fuel_secure_v5_mirror','fuel_control_celta_nmax_v4_records'];
+
+let state={records:[],settings:{plateCelta:'',plateNmax:'',initialOdoCelta:'',initialOdoNmax:'',oilKmCelta:10000,lastOilKmCelta:'',oilKmNmax:3000,lastOilKmNmax:''}};
+let meta={lastChange:null,lastBackup:null,lastSync:null,pendingCloud:false};
+let cloudConfig={url:'',key:''};
+let supabase=null,currentUser=null,currentFilter='Todos',syncTimer=null;
 
 const $=id=>document.getElementById(id);
 const money=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const num=(v,d=2)=>(Number(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
 const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const fmt=iso=>iso?new Date(iso).toLocaleString('pt-BR'):'—';
 
-function openSafetyDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open('FuelControlSafeV5',1);
-    req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('state'))req.result.createObjectStore('state')};
-    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
-  });
-}
-async function idbSaveState(){
-  try{
-    const db=await openSafetyDB();
-    await new Promise((resolve,reject)=>{const tx=db.transaction('state','readwrite');tx.objectStore('state').put({records,settings},'app');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});
-  }catch(e){}
-}
-async function idbRecoverState(){
-  try{
-    const db=await openSafetyDB();
-    return await new Promise((resolve,reject)=>{const req=db.transaction('state','readonly').objectStore('state').get('app');req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error)});
-  }catch(e){return null}
-}
-function saveCopies(){
-  localStorage.setItem(KEY_RECORDS,JSON.stringify(records));
-  localStorage.setItem(KEY_SETTINGS,JSON.stringify(settings));
-  localStorage.setItem(MIRROR_RECORDS,JSON.stringify(records));
-  localStorage.setItem(MIRROR_SETTINGS,JSON.stringify(settings));
+function readJSON(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null}catch{return null}}
+function saveLocal(markDirty=true){
+  if(markDirty){meta.lastChange=new Date().toISOString();meta.pendingCloud=true}
+  localStorage.setItem(STATE_KEY,JSON.stringify(state));
   localStorage.setItem(META_KEY,JSON.stringify(meta));
-  idbSaveState();
+  render();
+  if(markDirty) queueCloudSync();
 }
-function markChanged(){meta.lastChange=new Date().toISOString();meta.dirtyChanges=(meta.dirtyChanges||0)+1}
-function syncVehicleType(){$('vehicleType').value=$('vehicleName').value==='Celta'?'Carro':'Moto'}
-function saveRecords(){markChanged();saveCopies();render()}
-function saveSettings(){markChanged();saveCopies();render()}
-function fmtSafeDate(v){return v?new Date(v).toLocaleString('pt-BR'):'—'}
-function updateSafetyPanel(){
-  if($('safeRecords'))$('safeRecords').textContent=records.length;
-  if($('safeChange'))$('safeChange').textContent=fmtSafeDate(meta.lastChange);
-  if($('safeBackup'))$('safeBackup').textContent=meta.lastBackup?fmtSafeDate(meta.lastBackup):'Nunca';
-  if($('backupPending'))$('backupPending').style.display=(meta.dirtyChanges||0)>0?'block':'none';
+function migrate(){
+  const cur=readJSON(STATE_KEY); if(cur?.records){state=cur;return}
+  const v5=readJSON('fuel_secure_v5_primary')||readJSON('fuel_secure_v5_mirror');
+  if(v5?.records){state=v5;localStorage.setItem(STATE_KEY,JSON.stringify(state));return}
+  const v4=readJSON('fuel_control_celta_nmax_v4_records');
+  if(Array.isArray(v4)&&v4.length){state.records=v4;localStorage.setItem(STATE_KEY,JSON.stringify(state))}
 }
-function showRecoveryNotice(text){if(!text)return;const el=$('recoveryNotice');if(el){el.textContent=text;el.style.display='block'}}
-
-saveCopies();
 function computeCycles(list){
-  const grouped={}; list.forEach(r=>(grouped[r.vehicleName] ||= []).push(r));
-  const cycleMap=new Map(), stats={};
+  const grouped={};list.forEach(r=>(grouped[r.vehicleName] ||= []).push(r));
+  const cycleMap=new Map(),stats={};
   for(const vehicle of Object.keys(grouped)){
     const arr=grouped[vehicle].slice().sort((a,b)=>new Date(a.date)-new Date(b.date)||Number(a.odo)-Number(b.odo));
-    stats[vehicle]={cycles:[],totalKm:0,totalLiters:0,totalCost:0,lastOdo:arr.length?Number(arr[arr.length-1].odo):null};
-    let prevFull=-1;
-    for(let i=0;i<arr.length;i++){
-      if(arr[i].full==='yes'){
-        if(prevFull>=0){
-          const km=Number(arr[i].odo)-Number(arr[prevFull].odo);
-          let liters=0,cost=0;
-          for(let j=prevFull+1;j<=i;j++){liters+=Number(arr[j].liters)||0;cost+=Number(arr[j].total)||0}
-          if(km>0&&liters>0){
-            const c={endId:arr[i].id,km,liters,cost,kml:km/liters,cpk:cost/km,date:arr[i].date,odo:Number(arr[i].odo)};
-            cycleMap.set(arr[i].id,c); stats[vehicle].cycles.push(c); stats[vehicle].totalKm+=km; stats[vehicle].totalLiters+=liters; stats[vehicle].totalCost+=cost;
-          }
-        }
-        prevFull=i;
-      }
+    stats[vehicle]={cycles:[],totalKm:0,totalLiters:0};let prev=-1;
+    for(let i=0;i<arr.length;i++) if(arr[i].full==='yes'){
+      if(prev>=0){const km=+arr[i].odo-+arr[prev].odo;let liters=0,cost=0;for(let j=prev+1;j<=i;j++){liters+=+arr[j].liters||0;cost+=+arr[j].total||0}
+        if(km>0&&liters>0){const c={km,liters,cost,kml:km/liters,cpk:cost/km,date:arr[i].date};cycleMap.set(arr[i].id,c);stats[vehicle].cycles.push(c);stats[vehicle].totalKm+=km;stats[vehicle].totalLiters+=liters}}
+      prev=i;
     }
   }
   return {cycleMap,stats};
 }
-
-function setVehicleStats(vehicle,prefix,stats){
-  const d=stats[vehicle]||{cycles:[],totalKm:0,totalLiters:0}; const cs=d.cycles||[];
-  const vals=cs.map(c=>c.kml), last=cs.length?cs[cs.length-1]:null, avg=d.totalLiters>0?d.totalKm/d.totalLiters:null;
-  $(prefix+'Ultimo').textContent=last?num(last.kml,2)+' km/L':'—';
-  $(prefix+'Melhor').textContent=vals.length?num(Math.max(...vals),2)+' km/L':'—';
-  $(prefix+'Pior').textContent=vals.length?num(Math.min(...vals),2)+' km/L':'—';
-  $(prefix+'Media').textContent=avg?num(avg,2)+' km/L':'—';
+function setStats(vehicle,prefix,stats){
+  const d=stats[vehicle]||{cycles:[],totalKm:0,totalLiters:0};const vals=d.cycles.map(x=>x.kml),last=d.cycles.length?d.cycles.at(-1).kml:null,avg=d.totalLiters?d.totalKm/d.totalLiters:null;
+  $(prefix+'Ultimo').textContent=last?num(last,2)+' km/L':'—';$(prefix+'Melhor').textContent=vals.length?num(Math.max(...vals),2)+' km/L':'—';$(prefix+'Pior').textContent=vals.length?num(Math.min(...vals),2)+' km/L':'—';$(prefix+'Media').textContent=avg?num(avg,2)+' km/L':'—';
 }
-
-function maintenanceAlert(vehicle,id,lastOdo,interval,lastOilKm,lastOilDate){
-  const box=$(id);
-  if(lastOdo==null||!interval||!lastOilKm){box.className='alert ok';box.innerHTML='Sem dados suficientes para calcular.';return}
-  const next=Number(lastOilKm)+Number(interval), remain=next-Number(lastOdo);
-  let dateText='';
-  if(lastOilDate){const d=new Date(lastOilDate+'T12:00:00');d.setMonth(d.getMonth()+6);dateText=`<br>Referência por data: <strong>${d.toLocaleDateString('pt-BR')}</strong>`}
-  if(remain<=0){box.className='alert bad';box.innerHTML=`Troca de óleo do <strong>${vehicle}</strong> vencida. Próxima referência: <strong>${num(next,0)} km</strong>.${dateText}`}
-  else if(remain<=Math.max(500,interval*.1)){box.className='alert warn';box.innerHTML=`Troca de óleo próxima. Faltam <strong>${num(remain,0)} km</strong>.${dateText}`}
-  else {box.className='alert ok';box.innerHTML=`Em dia. Faltam <strong>${num(remain,0)} km</strong> para a próxima troca.${dateText}`}
-}
-
-function renderMonthList(){
-  const map={}; records.forEach(r=>{const d=new Date(r.date+'T12:00:00');const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;map[k]=(map[k]||0)+(Number(r.total)||0)});
-  const entries=Object.entries(map).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,8);
-  $('monthList').innerHTML=entries.length?entries.map(([k,v])=>{const [y,m]=k.split('-');const dt=new Date(+y,+m-1,1);return `<div class="month-row"><strong>${dt.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</strong><strong>${money(v)}</strong></div>`}).join(''):'<div class="mini">Sem dados.</div>';
-}
-
-function drawChart(id,cycles,label){
-  const c=$(id),x=c.getContext('2d'),w=c.width,h=c.height;x.clearRect(0,0,w,h);x.fillStyle='#fff';x.fillRect(0,0,w,h);
-  if(!cycles.length){x.fillStyle='#6b7280';x.font='14px sans-serif';x.fillText('Sem ciclos suficientes.',14,h/2);return}
-  const vals=cycles.map(v=>v.kml),min=Math.min(...vals),max=Math.max(...vals),left=40,right=12,top=20,bottom=30,pw=w-left-right,ph=h-top-bottom,ymin=Math.max(0,min-Math.max(1,(max-min)*.2)),ymax=max+Math.max(1,(max-min)*.2);
-  x.strokeStyle='#e5e7eb';x.lineWidth=1;
-  for(let i=0;i<=4;i++){const y=top+ph*i/4;x.beginPath();x.moveTo(left,y);x.lineTo(left+pw,y);x.stroke();x.fillStyle='#6b7280';x.font='11px sans-serif';x.fillText((ymax-(ymax-ymin)*i/4).toFixed(1),4,y+4)}
-  const pts=cycles.map((v,i)=>({x:left+(cycles.length===1?pw/2:pw*i/(cycles.length-1)),y:top+(1-(v.kml-ymin)/(ymax-ymin||1))*ph,v}));
-  x.strokeStyle='#111827';x.lineWidth=2;x.beginPath();pts.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));x.stroke();
-  pts.forEach(p=>{x.fillStyle='#111827';x.beginPath();x.arc(p.x,p.y,3.5,0,Math.PI*2);x.fill();x.fillStyle='#6b7280';x.font='10px sans-serif';x.fillText(new Date(p.v.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),p.x-14,h-8)});
-  x.fillStyle='#111827';x.font='bold 12px sans-serif';x.fillText(label,12,13);
-}
-
 function render(){
-  updateSafetyPanel();
-  ['plateCelta','plateNmax','initialOdoCelta','initialOdoNmax','oilKmCelta','lastOilKmCelta','oilKmNmax','lastOilKmNmax','lastOilDateCelta','lastOilDateNmax'].forEach(k=>{$(k).value=settings[k]??''});
-  $('plateShowCelta').textContent='Placa: '+(settings.plateCelta||'—'); $('plateShowNmax').textContent='Placa: '+(settings.plateNmax||'—');
-  $('odoShowCelta').textContent='Odômetro inicial: '+(settings.initialOdoCelta!==''?num(settings.initialOdoCelta,1)+' km':'—');
-  $('odoShowNmax').textContent='Odômetro inicial: '+(settings.initialOdoNmax!==''?num(settings.initialOdoNmax,1)+' km':'—');
-
-  const {cycleMap,stats}=computeCycles(records);
-  const totalCost=records.reduce((s,r)=>s+(Number(r.total)||0),0), totalLiters=records.reduce((s,r)=>s+(Number(r.liters)||0),0);
-  const totalKm=Object.values(stats).reduce((s,v)=>s+(v.totalKm||0),0), cycleLiters=Object.values(stats).reduce((s,v)=>s+(v.totalLiters||0),0);
-  $('gastoTotal').textContent=money(totalCost);$('litrosTotal').textContent=num(totalLiters,2)+' L';$('kmTotal').textContent=num(totalKm,1)+' km';$('mediaGlobal').textContent=cycleLiters?num(totalKm/cycleLiters,2)+' km/L':'—';
-  setVehicleStats('Celta','celta',stats);setVehicleStats('NMAX','nmax',stats);
-  maintenanceAlert('Celta','alertCelta',stats.Celta?.lastOdo,+settings.oilKmCelta,+settings.lastOilKmCelta,settings.lastOilDateCelta);
-  maintenanceAlert('NMAX','alertNmax',stats.NMAX?.lastOdo,+settings.oilKmNmax,+settings.lastOilKmNmax,settings.lastOilDateNmax);
-  renderMonthList();drawChart('chartCelta',stats.Celta?.cycles||[],'Consumo (km/L) — Celta');drawChart('chartNmax',stats.NMAX?.cycles||[],'Consumo (km/L) — NMAX');
-
-  const sorted=records.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)||Number(b.odo)-Number(a.odo));
-  const filtered=currentFilter==='Todos'?sorted:sorted.filter(r=>r.vehicleName===currentFilter);
-  $('empty').style.display=filtered.length?'none':'block';$('tbody').innerHTML='';
-  filtered.forEach(r=>{
-    const c=cycleMap.get(r.id),tr=document.createElement('tr');
-    tr.innerHTML=`<td>${new Date(r.date+'T12:00:00').toLocaleDateString('pt-BR')}</td>
-    <td><span class="pill ${r.vehicleName==='Celta'?'car':'moto'}">${esc(r.vehicleName)}</span></td><td>${esc(r.fuel)}</td><td>${num(r.odo,1)}</td><td>${num(r.liters,3)}</td><td>${money(r.price)}</td><td>${money(r.total)}</td>
-    <td>${c?num(c.km,1):'—'}</td><td><strong>${c?num(c.kml,2):'—'}</strong></td><td>${c?money(c.cpk):'—'}</td>
-    <td>${r.photo?`<span class="photo-link" onclick="viewPhoto('${r.id}')">Ver foto</span>`:'—'}</td><td class="left">${esc(r.note||'')}</td>
-    <td class="no-print"><button class="danger" style="padding:6px 9px;font-size:.75rem" onclick="delRec('${r.id}')">Excluir</button></td>`;
-    $('tbody').appendChild(tr);
-  });
+  const s=state.settings||{};
+  ['plateCelta','plateNmax','initialOdoCelta','initialOdoNmax','oilKmCelta','lastOilKmCelta','oilKmNmax','lastOilKmNmax'].forEach(k=>{if($(k)&&document.activeElement!==$(k))$(k).value=s[k]??''});
+  $('stRecords').textContent=state.records.length;$('stChange').textContent=fmt(meta.lastChange);$('stBackup').textContent=meta.lastBackup?fmt(meta.lastBackup):'Nunca';$('stPending').textContent=meta.pendingCloud?'Sim':'Não';
+  $('cloudLastSync').textContent=meta.lastSync?fmt(meta.lastSync):'—';$('cloudRecordCount').textContent=state.records.length;
+  const {cycleMap,stats}=computeCycles(state.records),totalCost=state.records.reduce((a,r)=>a+(+r.total||0),0),totalLiters=state.records.reduce((a,r)=>a+(+r.liters||0),0),totalKm=Object.values(stats).reduce((a,v)=>a+(v.totalKm||0),0),cycLiters=Object.values(stats).reduce((a,v)=>a+(v.totalLiters||0),0);
+  $('gastoTotal').textContent=money(totalCost);$('litrosTotal').textContent=num(totalLiters,2)+' L';$('kmTotal').textContent=num(totalKm,1)+' km';$('mediaGlobal').textContent=cycLiters?num(totalKm/cycLiters,2)+' km/L':'—';setStats('Celta','celta',stats);setStats('NMAX','nmax',stats);
+  const arr=state.records.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)||+b.odo-+a.odo),filtered=currentFilter==='Todos'?arr:arr.filter(r=>r.vehicleName===currentFilter);
+  $('tbody').innerHTML='';$('empty').style.display=filtered.length?'none':'block';
+  filtered.forEach(r=>{const c=cycleMap.get(r.id),tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(r.date+'T12:00:00').toLocaleDateString('pt-BR')}</td><td><span class="pill ${r.vehicleName==='Celta'?'car':'moto'}">${esc(r.vehicleName)}</span></td><td>${esc(r.fuel)}</td><td>${num(r.odo,1)}</td><td>${num(r.liters,3)}</td><td>${money(r.price)}</td><td>${money(r.total)}</td><td>${c?num(c.km,1):'—'}</td><td><strong>${c?num(c.kml,2):'—'}</strong></td><td>${c?money(c.cpk):'—'}</td><td class="left">${esc(r.note||'')}</td><td><button class="danger" style="padding:6px 8px;font-size:.74rem" onclick="window.delRec('${r.id}')">Excluir</button></td>`;$('tbody').appendChild(tr)});
 }
+window.setFilter=(f,b)=>{currentFilter=f;document.querySelectorAll('.filterbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}
+window.delRec=id=>{if(confirm('Excluir este abastecimento?')){state.records=state.records.filter(r=>r.id!==id);saveLocal(true)}}
 
-function setFilter(f,b){currentFilter=f;document.querySelectorAll('.filterbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}
-function delRec(id){if(confirm('Excluir este abastecimento?')){records=records.filter(r=>r.id!==id);saveRecords()}}
-function viewPhoto(id){const r=records.find(x=>x.id===id);if(!r?.photo)return;const w=window.open();w.document.write(`<img src="${r.photo}" style="max-width:100%;height:auto">`)}
-
-$('settingsForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  settings={
-    plateCelta:$('plateCelta').value.trim().toUpperCase(), initialOdoCelta:$('initialOdoCelta').value,
-    oilKmCelta:Number($('oilKmCelta').value)||10000,lastOilKmCelta:$('lastOilKmCelta').value,lastOilDateCelta:$('lastOilDateCelta').value,
-    plateNmax:$('plateNmax').value.trim().toUpperCase(), initialOdoNmax:$('initialOdoNmax').value,
-    oilKmNmax:Number($('oilKmNmax').value)||3000,lastOilKmNmax:$('lastOilKmNmax').value,lastOilDateNmax:$('lastOilDateNmax').value
-  };
-  saveSettings();alert('Configurações salvas.');
-});
-
-$('receiptPhoto').addEventListener('change',async e=>{
-  const file=e.target.files[0]; if(!file){currentPhotoData='';$('photoPreview').style.display='none';return}
-  currentPhotoData=await compressImage(file,1100,.72);
-  $('photoPreview').src=currentPhotoData;$('photoPreview').style.display='block';
-});
-function compressImage(file,maxSide,quality){
-  return new Promise((resolve,reject)=>{
-    const reader=new FileReader(); reader.onerror=reject; reader.onload=()=>{
-      const img=new Image(); img.onerror=reject; img.onload=()=>{
-        let w=img.width,h=img.height,scale=Math.min(1,maxSide/Math.max(w,h));w=Math.round(w*scale);h=Math.round(h*scale);
-        const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality));
-      };img.src=reader.result;
-    };reader.readAsDataURL(file);
-  });
+function setCloudMessage(text,type='warn'){const b=$('cloudMessage');b.textContent=text;b.className='banner '+type}
+function initCloud(){
+  cloudConfig=readJSON(CLOUD_KEY)||{url:'',key:''};
+  $('supabaseUrl').value=cloudConfig.url||'';$('supabaseKey').value=cloudConfig.key||'';
+  if(!cloudConfig.url||!cloudConfig.key){$('cloudSetup').classList.remove('hidden');$('authBox').classList.add('hidden');$('signedBox').classList.add('hidden');setCloudMessage('Configure o Supabase para ativar a sincronização.');return}
+  try{
+    supabase=createClient(cloudConfig.url,cloudConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    $('cloudSetup').classList.add('hidden');$('authBox').classList.remove('hidden');
+    bindAuth();
+  }catch(e){setCloudMessage('Não foi possível iniciar a configuração da nuvem. Confira URL e chave.','bad')}
 }
+async function bindAuth(){
+  const {data:{session}}=await supabase.auth.getSession();
+  handleSession(session);
+  supabase.auth.onAuthStateChange((_event,session)=>handleSession(session));
+}
+async function handleSession(session){
+  currentUser=session?.user||null;
+  if(currentUser){
+    $('authBox').classList.add('hidden');$('signedBox').classList.remove('hidden');$('cloudUser').textContent=currentUser.email||currentUser.id;$('cloudStatus').textContent='Conectado';setCloudMessage('Conta conectada. Alterações são sincronizadas automaticamente.','ok');
+    await syncBidirectional();
+  }else{
+    $('signedBox').classList.add('hidden');$('authBox').classList.remove('hidden');$('cloudStatus').textContent='Desconectado';setCloudMessage('Entre com sua conta para sincronizar celular e computador.','warn');
+  }
+}
+async function signIn(){
+  const email=$('authEmail').value.trim(),password=$('authPassword').value;
+  if(!email||!password)return alert('Informe e-mail e senha.');
+  setCloudMessage('Entrando...');
+  const {error}=await supabase.auth.signInWithPassword({email,password});
+  if(error)setCloudMessage('Erro ao entrar: '+error.message,'bad');
+}
+async function signUp(){
+  const email=$('authEmail').value.trim(),password=$('authPassword').value;
+  if(!email||!password)return alert('Informe e-mail e senha.');
+  setCloudMessage('Criando conta...');
+  const {data,error}=await supabase.auth.signUp({email,password});
+  if(error)setCloudMessage('Erro ao criar conta: '+error.message,'bad');
+  else if(!data.session)setCloudMessage('Conta criada. Verifique seu e-mail se o projeto exigir confirmação.','ok');
+}
+async function uploadCloud(){
+  if(!supabase||!currentUser||!navigator.onLine)return;
+  $('cloudStatus').textContent='Enviando...';
+  const now=new Date().toISOString();
+  const payload={records:state.records,settings:state.settings,localUpdatedAt:meta.lastChange};
+  const {error}=await supabase.from('fuel_app_state').upsert({user_id:currentUser.id,payload,updated_at:now},{onConflict:'user_id'});
+  if(error){$('cloudStatus').textContent='Erro';setCloudMessage('Falha ao enviar: '+error.message,'bad');return}
+  meta.lastSync=now;meta.pendingCloud=false;localStorage.setItem(META_KEY,JSON.stringify(meta));$('cloudStatus').textContent='Sincronizado';setCloudMessage('Dados sincronizados.','ok');render();
+}
+async function syncBidirectional(){
+  if(!supabase||!currentUser||!navigator.onLine)return;
+  $('cloudStatus').textContent='Sincronizando...';
+  const {data,error}=await supabase.from('fuel_app_state').select('payload,updated_at').eq('user_id',currentUser.id).maybeSingle();
+  if(error){$('cloudStatus').textContent='Erro';setCloudMessage('Falha ao consultar a nuvem: '+error.message,'bad');return}
+  if(!data){await uploadCloud();return}
+  const cloudTs=new Date(data.updated_at||0).getTime(),localTs=new Date(meta.lastChange||0).getTime();
+  if(cloudTs>localTs && data.payload){
+    state={records:Array.isArray(data.payload.records)?data.payload.records:[],settings:data.payload.settings||state.settings};
+    meta.lastChange=data.payload.localUpdatedAt||data.updated_at;meta.lastSync=new Date().toISOString();meta.pendingCloud=false;
+    localStorage.setItem(STATE_KEY,JSON.stringify(state));localStorage.setItem(META_KEY,JSON.stringify(meta));
+    $('cloudStatus').textContent='Atualizado da nuvem';setCloudMessage('Dados mais recentes recebidos da nuvem.','ok');render();
+  }else if(localTs>cloudTs || meta.pendingCloud){await uploadCloud()}
+  else{meta.lastSync=new Date().toISOString();localStorage.setItem(META_KEY,JSON.stringify(meta));$('cloudStatus').textContent='Sincronizado';setCloudMessage('Dados já estão sincronizados.','ok');render()}
+}
+function queueCloudSync(){clearTimeout(syncTimer);syncTimer=setTimeout(()=>{if(currentUser)uploadCloud()},900)}
 
-$('fuelForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  let liters=+$('liters').value,price=+$('price').value,total=+$('total').value;if(!total&&price)total=liters*price;if(!price&&total)price=total/liters;
-  const vehicleName=$('vehicleName').value;
-  records.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date:$('date').value,vehicleName,vehicleType:vehicleName==='Celta'?'Carro':'Moto',fuel:$('fuel').value,odo:+$('odo').value,liters,price,total,full:$('full').value,note:$('note').value.trim(),photo:currentPhotoData||''});
-  try{saveRecords()}catch(err){alert('Não foi possível salvar. O armazenamento do navegador pode estar cheio por causa das fotos. Faça um backup e remova fotos antigas.');return}
-  const keep=vehicleName;$('fuelForm').reset();$('date').value=new Date().toISOString().slice(0,10);$('vehicleName').value=keep;$('full').value='yes';currentPhotoData='';$('photoPreview').style.display='none';syncVehicleType();
-});
+$('cloudConfigForm').addEventListener('submit',e=>{e.preventDefault();const url=$('supabaseUrl').value.trim().replace(/\/$/,''),key=$('supabaseKey').value.trim();if(!url||!key)return alert('Informe URL e chave pública.');localStorage.setItem(CLOUD_KEY,JSON.stringify({url,key}));location.reload()});
+$('signInBtn').onclick=signIn;$('signUpBtn').onclick=signUp;$('syncNowBtn').onclick=syncBidirectional;
+$('signOutBtn').onclick=async()=>{await supabase.auth.signOut()};
+$('changeCloudBtn').onclick=()=>{if(confirm('Alterar a configuração da nuvem?')){localStorage.removeItem(CLOUD_KEY);location.reload()}};
 
-$('vehicleName').addEventListener('change',syncVehicleType);
+$('settingsForm').addEventListener('submit',e=>{e.preventDefault();state.settings={...state.settings,plateCelta:$('plateCelta').value.trim().toUpperCase(),initialOdoCelta:$('initialOdoCelta').value,oilKmCelta:+$('oilKmCelta').value||10000,lastOilKmCelta:$('lastOilKmCelta').value,plateNmax:$('plateNmax').value.trim().toUpperCase(),initialOdoNmax:$('initialOdoNmax').value,oilKmNmax:+$('oilKmNmax').value||3000,lastOilKmNmax:$('lastOilKmNmax').value};saveLocal(true);alert('Configurações salvas.')});
+$('fuelForm').addEventListener('submit',e=>{e.preventDefault();let liters=+$('liters').value,price=+$('price').value,total=+$('total').value;if(!total&&price)total=liters*price;if(!price&&total)price=total/liters;const vehicleName=$('vehicleName').value;state.records.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date:$('date').value,vehicleName,vehicleType:vehicleName==='Celta'?'Carro':'Moto',fuel:$('fuel').value,full:$('full').value,odo:+$('odo').value,liters,price,total,note:$('note').value.trim()});saveLocal(true);const keep=vehicleName;$('fuelForm').reset();$('date').value=new Date().toISOString().slice(0,10);$('vehicleName').value=keep;$('full').value='yes'});
 $('price').addEventListener('input',()=>{const l=+$('liters').value,p=+$('price').value;if(l&&p)$('total').value=(l*p).toFixed(2)});
 $('total').addEventListener('input',()=>{const l=+$('liters').value,t=+$('total').value;if(l&&t)$('price').value=(t/l).toFixed(3)});
 
-function exportCSV(){
-  if(!records.length)return alert('Não há dados para exportar.');
-  const {cycleMap}=computeCycles(records);
-  const head=['Data','Veiculo','Tipo','Placa','Hodometro','Litros','Preco_L','Total','Tanque_Cheio','Km_Rodados','Km_L','Custo_km','Tem_Foto','Observacao'];
-  const rows=records.map(r=>{const c=cycleMap.get(r.id),plate=r.vehicleName==='Celta'?(settings.plateCelta||''):(settings.plateNmax||'');return [r.date,r.vehicleName,r.vehicleType,plate,r.odo,r.liters,r.price,r.total,r.full==='yes'?'Sim':'Não',c?c.km:'',c?c.kml.toFixed(3):'',c?c.cpk.toFixed(4):'',r.photo?'Sim':'Não',r.note||'']});
-  const csv=[head,...rows].map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n');download(new Blob(["\ufeff"+csv],{type:'text/csv;charset=utf-8'}),'abastecimentos_celta_nmax_v4.csv');
-}
-function backupJSON(){
-  const stamp=new Date().toISOString().slice(0,10);
-  const payload={version:5,createdAt:new Date().toISOString(),settings,records};
-  download(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),`backup_celta_nmax_${stamp}.json`);
-  meta.lastBackup=new Date().toISOString();meta.dirtyChanges=0;saveCopies();render();
-}
-$('restoreFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());let newRecords,newSettings;if(Array.isArray(d)){newRecords=d;newSettings=settings}else{newRecords=d.records||d.state?.records;newSettings=d.settings||d.state?.settings||settings}if(!Array.isArray(newRecords))throw new Error();if(confirm('Restaurar este backup e substituir os dados atuais?')){records=newRecords;settings=newSettings;meta.lastChange=new Date().toISOString();meta.dirtyChanges=0;saveCopies();render();showRecoveryNotice('Backup restaurado com sucesso.')}}catch{alert('Arquivo inválido.')}e.target.value=''});
+window.backupJSON=()=>{const payload={version:6,createdAt:new Date().toISOString(),state,meta};download(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),'backup_abastecimento_v6.json');meta.lastBackup=new Date().toISOString();localStorage.setItem(META_KEY,JSON.stringify(meta));render()}
+window.exportCSV=()=>{if(!state.records.length)return alert('Não há dados.');const {cycleMap}=computeCycles(state.records),head=['Data','Veiculo','Combustivel','Hodometro','Litros','Preco_L','Total','Tanque_Cheio','Km_Rodados','Km_L','Custo_km','Observacao'],rows=state.records.map(r=>{const c=cycleMap.get(r.id);return[r.date,r.vehicleName,r.fuel,r.odo,r.liters,r.price,r.total,r.full==='yes'?'Sim':'Não',c?c.km:'',c?c.kml.toFixed(3):'',c?c.cpk.toFixed(4):'',r.note||'']});download(new Blob(["\ufeff"+[head,...rows].map(row=>row.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(';')).join('\n')],{type:'text/csv;charset=utf-8'}),'abastecimentos.csv')}
 function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)}
+$('restoreFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text()),ns=d.state?.records?d.state:(Array.isArray(d.records)?{records:d.records,settings:d.settings||state.settings}:Array.isArray(d)?{records:d,settings:state.settings}:null);if(!ns)throw 0;if(confirm('Restaurar e substituir os dados atuais?')){state=ns;meta.lastChange=new Date().toISOString();meta.pendingCloud=true;saveLocal(false);queueCloudSync()}}catch{alert('Backup inválido.')}e.target.value=''});
 
-function generatePDFReport(){
-  const old=currentFilter;currentFilter='Todos';render();
-  document.title='Relatório de Abastecimento - Celta e NMAX';
-  window.print();
-  currentFilter=old;render();
-}
+window.addEventListener('focus',()=>{if(currentUser)syncBidirectional()});
+window.addEventListener('online',()=>{if(currentUser)syncBidirectional()});
+if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installBtn').style.display='inline-block'});
-$('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('installBtn').style.display='none'});
-window.addEventListener('appinstalled',()=>{$('installBtn').style.display='none'});
-
-if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(()=>{});
-
-$('date').value=new Date().toISOString().slice(0,10);$('vehicleName').value='Celta';$('full').value='yes';syncVehicleType();
-if(location.protocol==='file:' || location.protocol==='content:')$('localOpenWarning').style.display='block';
-showRecoveryNotice(startupRecovery);
-render();
-if(!records.length){
-  idbRecoverState().then(st=>{
-    if(st&&Array.isArray(st.records)&&st.records.length){records=st.records;settings=st.settings||settings;saveCopies();showRecoveryNotice('Histórico recuperado automaticamente pelo banco interno do navegador.');render()}
-  });
-}
+migrate();meta=readJSON(META_KEY)||meta;cloudConfig=readJSON(CLOUD_KEY)||cloudConfig;
+$('date').value=new Date().toISOString().slice(0,10);$('full').value='yes';render();initCloud();
 </script>
 </body>
 </html>

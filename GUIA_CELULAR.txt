@@ -1,0 +1,26 @@
+GUIA RÁPIDO — PUBLICAR PELO CELULAR
+
+1) Acesse github.com e faça login.
+2) + > New repository.
+3) Nome: abastecimento-celta-nmax
+4) Public > Create repository.
+5) Add file > Upload files.
+6) Envie:
+   index.html
+   manifest.json
+   sw.js
+   icon.svg
+   .nojekyll
+7) Commit changes.
+8) Settings > Pages.
+9) Source: Deploy from a branch.
+10) Branch: main | Folder: /(root)
+11) Save.
+12) Aguarde alguns minutos.
+13) Abra o link informado pelo GitHub.
+14) No Chrome/Samsung Internet: menu > Instalar app / Adicionar à tela inicial.
+
+IMPORTANTE:
+- Abra sempre pelo ícone instalado.
+- Faça backup JSON periodicamente.
+- Seus abastecimentos ficam no aparelho/navegador, não no GitHub.
